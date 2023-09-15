@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple To-do List</title>
+  <style>
+    /* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+    html,
+    body,
+    div,
+    span,
+    applet,
+    object,
+    iframe,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    blockquote,
+    pre,
+    a,
+    abbr,
+    acronym,
+    address,
+    big,
+    cite,
+    code,
+    del,
+    dfn,
+    em,
+    img,
+    ins,
+    kbd,
+    q,
+    s,
+    samp,
+    small,
+    strike,
+    strong,
+    sub,
+    sup,
+    tt,
+    var,
+    b,
+    u,
+    i,
+    center,
+    dl,
+    dt,
+    dd,
+    ol,
+    ul,
+    li,
+    fieldset,
+    form,
+    label,
+    legend,
+    table,
+    caption,
+    tbody,
+    tfoot,
+    thead,
+    tr,
+    th,
+    td,
+    article,
+    aside,
+    canvas,
+    details,
+    embed,
+    figure,
+    figcaption,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    output,
+    ruby,
+    section,
+    summary,
+    time,
+    mark,
+    audio,
+    video {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 100%;
+      font: inherit;
+      vertical-align: baseline;
+    }
+
+    /* HTML5 display-role reset for older browsers */
+    article,
+    aside,
+    details,
+    figcaption,
+    figure,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    section {
+      display: block;
+    }
+
+    body {
+      line-height: 1;
+    }
+
+    ol,
+    ul {
+      list-style: none;
+    }
+
+    blockquote,
+    q {
+      quotes: none;
+    }
+
+    blockquote:before,
+    blockquote:after,
+    q:before,
+    q:after {
+      content: '';
+      content: none;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+  </style>
+  <style>
+    body {
+      width: 100%;
+      height: 100vh;
+      background-color: hsl(231, 16%, 9%);
+      color: white;
+    }
+
+    .tasks {
+      width: 90%;
+      height: fit-content;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+      margin: 1rem auto;
+    }
+
+    .tasks_input {
+      margin-top: 0.25rem;
+      width: 100%;
+    }
+
+    .tasks_input_text {
+      height: 30px;
+      border-radius: 5px;
+      width: 95%;
+    }
+
+    .tasks_list_div {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+
+    }
+
+    .tasks_list {
+      width: 95%;
+    }
+
+    .tasks_list_item {
+      display: flex;
+      justify-content: space-between;
+      height: fit-content;
+      padding: 5px 10px;
+      font-size: 1rem;
+      border-bottom: 1px solid hsl(233, 18%, 18%);
+      margin-top: 0.5rem;
+    }
+
+    .tasks_list_item p {
+      max-width: 40px;
+    }
+
+    .tasks_list_item button {
+      background-color: hsl(1, 81%, 41%);
+      border: none;
+      border-radius: 8px;
+      color: white;
+    }
+
+
+    @media (min-width: 600px) {
+
+      .tasks {
+        width: 30%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="tasks">
+    <div class="tasks_input">
+      <input type="text" class="tasks_input_text" placeholder="Add a Task (25char max)">
+    </div>
+
+    <div class="tasks_list_div">
+      <ul class="tasks_list">
+      </ul>
+    </div>
+
+  </div>
+
+  <script>const input = document.querySelector('.tasks_input_text');
+    const tasksList = document.querySelector('.tasks_list');
+    const tasks = [];
+
+    const storedTasks = localStorage.getItem('tasks');
+    if (storedTasks) {
+      tasks.push(...JSON.parse(storedTasks));
+      renderTasks();
+    }
+
+    input.addEventListener('change', () => {
+      let inputValue = input.value;
+      let inputValueString = inputValue.toString();
+
+      if (inputValue === '') return;
+      if (inputValueString.length > 25) return;
+
+      tasks.push(inputValue);
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      renderTasks();
+      input.value = '';
+    });
+
+    function renderTasks() {
+      tasksList.innerHTML = '';
+      for (let i = 0; i < tasks.length; i++) {
+        const taskItem = document.createElement('li');
+        taskItem.classList.add('tasks_list_item');
+        taskItem.innerHTML = `<p>${tasks[i]}</p><button class="delete">X</button>`;
+        tasksList.appendChild(taskItem);
+
+        const deleteButton = taskItem.querySelector('.delete');
+        deleteButton.addEventListener('click', () => {
+          tasks.splice(i, 1);
+          localStorage.setItem('tasks', JSON.stringify(tasks));
+          renderTasks();
+        });
+      }
+    }
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === ' ') e.preventDefault();
+      if (input.value.length === 25) e.preventDefault();
+    });
+
+  </script>
+</body>
+
+</html>
